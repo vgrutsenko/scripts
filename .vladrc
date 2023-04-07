@@ -1,0 +1,43 @@
+mkcd ()
+{
+  mkdir -p -- "$1" && cd -P -- "$1"
+}
+
+gerrit-push ()
+{(
+    set -e
+    git add .
+    git commit -m $2
+    git push origin HEAD:refs/for/$1
+    echo -n "gerrit ref: "
+    git ls-remote $(git remote) | grep $(git log -1 --format="%H") | cut -f2
+    echo
+)}
+
+gerrit-ammend ()
+{(
+    set -e
+    git add .
+    git commit --amend --no-edit
+    git push origin HEAD:refs/for/$1
+    echo -n "gerrit ref: "
+    git ls-remote $(git remote) | grep $(git log -1 --format="%H") | cut -f2
+)}
+
+gerrit-checkout () 
+{(
+    set -e
+    remrefs=$(git ls-remote origin | grep /$1/ | cut -f2)
+    lastrefnum=$(echo "$remrefs" | grep -Eo '[0-9]+$' | sort -n | tail -n1)
+    lastref=$(echo "$remrefs" | grep -E /$lastrefnum$)
+    git fetch origin $lastref && git checkout FETCH_HEAD
+    echo -n "gerrit ref: $lastref"
+    echo
+)}
+
+git-amend-push () 
+{(
+    set -e
+    git commit --amend --no-edit
+    git push --force
+)}
