@@ -1,4 +1,4 @@
-// paste this in your pipeline to inject custom commands interactively when it's being executed
+// paste this in your pipeline to inject custom commands interactively when it's executed
 
 def cmd = ''
 while(true) {
